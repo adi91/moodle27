@@ -6,7 +6,7 @@ $CFG = new stdClass();
 
 $CFG->dbtype    = 'mysqli';
 $CFG->dblibrary = 'native';
-$CFG->dbhost    = 'localhost';
+$CFG->dbhost    = 'localhost'; // path of server host
 $CFG->dbname    = 'moodle27';
 $CFG->dbuser    = 'root';
 $CFG->dbpass    = '';
