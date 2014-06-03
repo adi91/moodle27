@@ -38,36 +38,16 @@ echo $OUTPUT->doctype() ?>
 
 <?php echo $OUTPUT->standard_top_of_body_html() ?>
 
-<!--<header role="banner" class="navbar navbar-fixed-top<?php // echo $html->navbarclass ?> moodle-has-zindex">
-    <nav role="navigation" class="navbar-inner">
-        <div class="container-fluid">
-            <a class="brand" href="<?php // echo $CFG->wwwroot;?>"><?php // echo $SITE->shortname; ?></a>
-            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </a>
-            <div class="nav-collapse collapse">
-                <?php // echo $OUTPUT->custom_menu(); ?>
-                <ul class="nav pull-right">
-                    <li><?php // echo $OUTPUT->page_heading_menu(); ?></li>
-                    <li class="navbar-text"><?php // echo $OUTPUT->login_info() ?></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-</header>-->
-    
-    <?php include('header.php'); ?>
+<?php include('header.php'); //included header file ?>
 
 <div id="page" class="container-fluid">
 
     <header id="page-header" class="clearfix">
-        <?php echo $html->heading; ?>
-        <div id="page-navbar" class="clearfix">
-            <nav class="breadcrumb-nav"><?php echo $OUTPUT->navbar(); ?></nav>
-            <div class="breadcrumb-button"><?php echo $OUTPUT->page_heading_button(); ?></div>
-        </div>
+        
+<!--        <div id="page-navbar" class="clearfix">
+            <nav class="breadcrumb-nav"><?php // echo $OUTPUT->navbar(); ?></nav>
+            <div class="breadcrumb-button"><?php // echo $OUTPUT->page_heading_button(); ?></div>
+        </div>-->
         <div id="course-header">
             <?php echo $OUTPUT->course_header(); ?>
         </div>
@@ -83,18 +63,7 @@ echo $OUTPUT->doctype() ?>
         </section>
     </div>
 
-<!--    <footer id="page-footer">
-        <div id="course-footer"><?php // echo $OUTPUT->course_footer(); ?></div>
-        <p class="helplink"><?php // echo $OUTPUT->page_doc_link(); ?></p>
-        <?php
-//        echo $html->footnote;
-//        echo $OUTPUT->login_info();
-//        echo $OUTPUT->home_link();
-//        echo $OUTPUT->standard_footer_html();
-        ?>
-    </footer>-->
-
-    <?php include('footer.php'); //included footer file ?>
+<?php include('footer.php'); //included footer file ?>
 
     <?php echo $OUTPUT->standard_end_of_body_html() ?>
 

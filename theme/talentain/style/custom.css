@@ -19,3 +19,9 @@ a.logo {
 /* Custom CSS Settings
 -------------------------*/
 [[setting:customcss]]
+
+body {
+    padding-top: 0;
+}
+#page-header {padding-top: 35px;}
+a.logo {width: 20%;}
