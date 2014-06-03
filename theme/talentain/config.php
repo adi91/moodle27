@@ -38,64 +38,16 @@ $THEME->name = 'talentain';
 //
 $THEME->doctype = 'html5';
 $THEME->parents = array('bootstrapbase');
-$THEME->sheets = array('custom', 'login');
+$THEME->sheets = array('custom');
 $THEME->supportscssoptimisation = false;
 $THEME->yuicssmodules = array();
-
+$THEME->enable_dock = true;
 $THEME->editor_sheets = array();
 
-$THEME->plugins_exclude_sheets = array(
-    'block' => array(
-        'html',
-    ),
-    'gradereport' => array(
-        'grader',
-    ),
-);
-
 $THEME->rendererfactory = 'theme_overridden_renderer_factory';
+$THEME->csspostprocess = 'theme_talentain_process_css';
 
-$THEME->layouts = array(
-    'standard_report' => array(
-        'file' => 'general.php',
-        'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-pre',
-        'options' => array('nofooter'=>false, 'noblocks'=>true, 'nonavbar'=>true),
-    ),
-    'noblock' => array(
-        'file' => 'general.php',
-        'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-pre',
-        'options' => array('noblocks'=>true, 'nonavbar'=>true),
-    ),
-    'incourse' => array(
-        'file' => 'course.php',
-        'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-pre',
-        'options' => array('noblocks'=>false, 'nonavbar'=>true),
-    ),
-    'dashboard' => array(
-        'file' => 'dashboard.php',
-        'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-pre',
-        'options' => array('noblocks'=>false, 'nonavbar'=>true),
-    ),
-    'manage' => array(
-        'file' => 'manage.php',
-        'regions' => array('side-pre', 'side-post'),
-        'defaultregion' => 'side-pre',
-        'options' => array('noblocks'=>false, 'nonavbar'=>true),
-    ),
-    
+$THEME->blockrtlmanipulations = array(
+    'side-pre' => 'side-post',
+    'side-post' => 'side-pre'
 );
-
-$THEME->csspostprocess = 'talentain_process_css';
-
-$useragent = '';
-if (!empty($_SERVER['HTTP_USER_AGENT'])) {
-    $useragent = $_SERVER['HTTP_USER_AGENT'];
-}
-if (strpos($useragent, 'MSIE 8') || strpos($useragent, 'MSIE 7')) {
-    $THEME->javascripts[] = 'html5shiv';
-}
-
