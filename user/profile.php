@@ -147,7 +147,9 @@ if ($node = $PAGE->settingsnav->get('root')) {
 
 
 // Toggle the editing state and switches.
-if ($PAGE->user_allowed_editing()) {
+
+// Hiding user page edit button @aditya 060514
+/*if ($PAGE->user_allowed_editing()) {
     if ($reset !== null) {
         if (!is_null($userid)) {
             if (!$currentpage = my_reset_page($userid, MY_PAGE_PUBLIC, 'user-profile')) {
@@ -204,7 +206,9 @@ if ($PAGE->user_allowed_editing()) {
 
 } else {
     $USER->editing = $edit = 0;
-}
+}*/ 
+
+// Hiding user page edit button
 
 // HACK WARNING!  This loads up all this page's blocks in the system context.
 if ($currentpage->userid == 0) {

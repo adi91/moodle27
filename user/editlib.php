@@ -218,18 +218,18 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
         $mform->setType('email', PARAM_EMAIL);
     }
 
-    $choices = array();
-    $choices['0'] = get_string('emaildisplayno');
-    $choices['1'] = get_string('emaildisplayyes');
-    $choices['2'] = get_string('emaildisplaycourse');
-    $mform->addElement('select', 'maildisplay', get_string('emaildisplay'), $choices);
-    $mform->setDefault('maildisplay', 2);
+//    $choices = array();
+//    $choices['0'] = get_string('emaildisplayno');
+//    $choices['1'] = get_string('emaildisplayyes');
+//    $choices['2'] = get_string('emaildisplaycourse');
+//    $mform->addElement('select', 'maildisplay', get_string('emaildisplay'), $choices);
+//    $mform->setDefault('maildisplay', 2);
 
-    $choices = array();
-    $choices['0'] = get_string('textformat');
-    $choices['1'] = get_string('htmlformat');
-    $mform->addElement('select', 'mailformat', get_string('emailformat'), $choices);
-    $mform->setDefault('mailformat', 1);
+//    $choices = array();
+//    $choices['0'] = get_string('textformat');
+//    $choices['1'] = get_string('htmlformat');
+//    $mform->addElement('select', 'mailformat', get_string('emailformat'), $choices);
+//    $mform->setDefault('mailformat', 1);
 
     if (!empty($CFG->allowusermailcharset)) {
         $choices = array();
@@ -243,46 +243,46 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
         $mform->addElement('select', 'preference_mailcharset', get_string('emailcharset'), $choices);
     }
 
-    $choices = array();
-    $choices['0'] = get_string('emaildigestoff');
-    $choices['1'] = get_string('emaildigestcomplete');
-    $choices['2'] = get_string('emaildigestsubjects');
-    $mform->addElement('select', 'maildigest', get_string('emaildigest'), $choices);
-    $mform->setDefault('maildigest', 0);
-    $mform->addHelpButton('maildigest', 'emaildigest');
+//    $choices = array();
+//    $choices['0'] = get_string('emaildigestoff');
+//    $choices['1'] = get_string('emaildigestcomplete');
+//    $choices['2'] = get_string('emaildigestsubjects');
+//    $mform->addElement('select', 'maildigest', get_string('emaildigest'), $choices);
+//    $mform->setDefault('maildigest', 0);
+//    $mform->addHelpButton('maildigest', 'emaildigest');
 
-    $choices = array();
-    $choices['1'] = get_string('autosubscribeyes');
-    $choices['0'] = get_string('autosubscribeno');
-    $mform->addElement('select', 'autosubscribe', get_string('autosubscribe'), $choices);
-    $mform->setDefault('autosubscribe', 1);
+//    $choices = array();
+//    $choices['1'] = get_string('autosubscribeyes');
+//    $choices['0'] = get_string('autosubscribeno');
+//    $mform->addElement('select', 'autosubscribe', get_string('autosubscribe'), $choices);
+//    $mform->setDefault('autosubscribe', 1);
 
-    if (!empty($CFG->forum_trackreadposts)) {
-        $choices = array();
-        $choices['0'] = get_string('trackforumsno');
-        $choices['1'] = get_string('trackforumsyes');
-        $mform->addElement('select', 'trackforums', get_string('trackforums'), $choices);
-        $mform->setDefault('trackforums', 0);
-    }
+//    if (!empty($CFG->forum_trackreadposts)) {
+//        $choices = array();
+//        $choices['0'] = get_string('trackforumsno');
+//        $choices['1'] = get_string('trackforumsyes');
+//        $mform->addElement('select', 'trackforums', get_string('trackforums'), $choices);
+//        $mform->setDefault('trackforums', 0);
+//    }
 
-    $editors = editors_get_enabled();
-    if (count($editors) > 1) {
-        $choices = array('' => get_string('defaulteditor'));
-        $firsteditor = '';
-        foreach (array_keys($editors) as $editor) {
-            if (!$firsteditor) {
-                $firsteditor = $editor;
-            }
-            $choices[$editor] = get_string('pluginname', 'editor_' . $editor);
-        }
-        $mform->addElement('select', 'preference_htmleditor', get_string('textediting'), $choices);
-        $mform->setDefault('preference_htmleditor', '');
-    } else {
-        // Empty string means use the first chosen text editor.
-        $mform->addElement('hidden', 'preference_htmleditor');
-        $mform->setDefault('preference_htmleditor', '');
-        $mform->setType('preference_htmleditor', PARAM_PLUGIN);
-    }
+//    $editors = editors_get_enabled();
+//    if (count($editors) > 1) {
+//        $choices = array('' => get_string('defaulteditor'));
+//        $firsteditor = '';
+//        foreach (array_keys($editors) as $editor) {
+//            if (!$firsteditor) {
+//                $firsteditor = $editor;
+//            }
+//            $choices[$editor] = get_string('pluginname', 'editor_' . $editor);
+//        }
+//        $mform->addElement('select', 'preference_htmleditor', get_string('textediting'), $choices);
+//        $mform->setDefault('preference_htmleditor', '');
+//    } else {
+//        // Empty string means use the first chosen text editor.
+//        $mform->addElement('hidden', 'preference_htmleditor');
+//        $mform->setDefault('preference_htmleditor', '');
+//        $mform->setType('preference_htmleditor', PARAM_PLUGIN);
+//    }
 
     $mform->addElement('text', 'city', get_string('city'), 'maxlength="120" size="21"');
     $mform->setType('city', PARAM_TEXT);
@@ -297,17 +297,17 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
         $mform->setDefault('country', $CFG->country);
     }
 
-    $choices = get_list_of_timezones();
-    $choices['99'] = get_string('serverlocaltime');
-    if ($CFG->forcetimezone != 99) {
-        $mform->addElement('static', 'forcedtimezone', get_string('timezone'), $choices[$CFG->forcetimezone]);
-    } else {
-        $mform->addElement('select', 'timezone', get_string('timezone'), $choices);
-        $mform->setDefault('timezone', '99');
-    }
+//    $choices = get_list_of_timezones();
+//    $choices['99'] = get_string('serverlocaltime');
+//    if ($CFG->forcetimezone != 99) {
+//        $mform->addElement('static', 'forcedtimezone', get_string('timezone'), $choices[$CFG->forcetimezone]);
+//    } else {
+//        $mform->addElement('select', 'timezone', get_string('timezone'), $choices);
+//        $mform->setDefault('timezone', '99');
+//    }
 
-    $mform->addElement('select', 'lang', get_string('preferredlanguage'), get_string_manager()->get_list_of_translations());
-    $mform->setDefault('lang', $CFG->lang);
+//    $mform->addElement('select', 'lang', get_string('preferredlanguage'), get_string_manager()->get_list_of_translations());
+//    $mform->setDefault('lang', $CFG->lang);
 
     // Multi-Calendar Support - see MDL-18375.
     $calendartypes = \core_calendar\type_factory::get_list_of_calendar_types();
@@ -354,44 +354,48 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
     }
 
     // Display user name fields that are not currenlty enabled here if there are any.
-    $disabledusernamefields = useredit_get_disabled_name_fields($enabledusernamefields);
-    if (count($disabledusernamefields) > 0) {
-        $mform->addElement('header', 'moodle_additional_names', get_string('additionalnames'));
-        foreach ($disabledusernamefields as $allname) {
-            $mform->addElement('text', $allname, get_string($allname), 'maxlength="100" size="30"');
-            $mform->setType($allname, PARAM_NOTAGS);
-        }
-    }
+//    $disabledusernamefields = useredit_get_disabled_name_fields($enabledusernamefields);
+//    if (count($disabledusernamefields) > 0) {
+//        $mform->addElement('header', 'moodle_additional_names', get_string('additionalnames'));
+//        foreach ($disabledusernamefields as $allname) {
+//            $mform->addElement('text', $allname, get_string($allname), 'maxlength="100" size="30"');
+//            $mform->setType($allname, PARAM_NOTAGS);
+//        }
+//    }
 
-    if (!empty($CFG->usetags) and empty($USER->newadminuser)) {
-        $mform->addElement('header', 'moodle_interests', get_string('interests'));
-        $mform->addElement('tags', 'interests', get_string('interestslist'), array('display' => 'noofficial'));
-        $mform->addHelpButton('interests', 'interestslist');
-    }
+//    if (!empty($CFG->usetags) and empty($USER->newadminuser)) {
+//        $mform->addElement('header', 'moodle_interests', get_string('interests'));
+//        $mform->addElement('tags', 'interests', get_string('interestslist'), array('display' => 'noofficial'));
+//        $mform->addHelpButton('interests', 'interestslist');
+//    }
 
     // Moodle optional fields.
     $mform->addElement('header', 'moodle_optional', get_string('optional', 'form'));
+    
+    // moved interest field from a seprate section to optional section @aditya 060514
+    $mform->addElement('tags', 'interests', get_string('interestslist'), array('display' => 'noofficial'));
+    $mform->addHelpButton('interests', 'interestslist');
 
     $mform->addElement('text', 'url', get_string('webpage'), 'maxlength="255" size="50"');
     $mform->setType('url', PARAM_URL);
 
-    $mform->addElement('text', 'icq', get_string('icqnumber'), 'maxlength="15" size="25"');
-    $mform->setType('icq', PARAM_NOTAGS);
+//    $mform->addElement('text', 'icq', get_string('icqnumber'), 'maxlength="15" size="25"');
+//    $mform->setType('icq', PARAM_NOTAGS);
 
     $mform->addElement('text', 'skype', get_string('skypeid'), 'maxlength="50" size="25"');
     $mform->setType('skype', PARAM_NOTAGS);
 
-    $mform->addElement('text', 'aim', get_string('aimid'), 'maxlength="50" size="25"');
-    $mform->setType('aim', PARAM_NOTAGS);
+//    $mform->addElement('text', 'aim', get_string('aimid'), 'maxlength="50" size="25"');
+//    $mform->setType('aim', PARAM_NOTAGS);
 
-    $mform->addElement('text', 'yahoo', get_string('yahooid'), 'maxlength="50" size="25"');
-    $mform->setType('yahoo', PARAM_NOTAGS);
+//    $mform->addElement('text', 'yahoo', get_string('yahooid'), 'maxlength="50" size="25"');
+//    $mform->setType('yahoo', PARAM_NOTAGS);
 
-    $mform->addElement('text', 'msn', get_string('msnid'), 'maxlength="50" size="25"');
-    $mform->setType('msn', PARAM_NOTAGS);
+//    $mform->addElement('text', 'msn', get_string('msnid'), 'maxlength="50" size="25"');
+//    $mform->setType('msn', PARAM_NOTAGS);
 
-    $mform->addElement('text', 'idnumber', get_string('idnumber'), 'maxlength="255" size="25"');
-    $mform->setType('idnumber', PARAM_NOTAGS);
+//    $mform->addElement('text', 'idnumber', get_string('idnumber'), 'maxlength="255" size="25"');
+//    $mform->setType('idnumber', PARAM_NOTAGS);
 
     $mform->addElement('text', 'institution', get_string('institution'), 'maxlength="255" size="25"');
     $mform->setType('institution', PARAM_TEXT);
