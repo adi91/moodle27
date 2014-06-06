@@ -73,6 +73,11 @@ if ($id == -1) {
     // Editing existing user.
     require_capability('moodle/user:update', $systemcontext);
     $user = $DB->get_record('user', array('id' => $id), '*', MUST_EXIST);
+    
+    // Getting user role information to display
+    $user_role = $DB->get_record('role_assignments', array('userid' => $user->id, 'contextid' =>1));
+    $user->user_role = $user_role->roleid;
+
     $PAGE->set_context(context_user::instance($user->id));
     if ($user->id != $USER->id) {
         $PAGE->navigation->extend_for_user($user);
@@ -185,7 +190,14 @@ if ($usernew = $userform->get_data()) {
         } else {
             $usernew->password = AUTH_PASSWORD_NOT_CACHED;
         }
+        
+        
         $usernew->id = user_create_user($usernew, false);
+        
+        /************Assigning the role e*************/
+        role_assign($usernew->user_role, $usernew->id, 1);
+        
+        // enrole user into site level 
 
         if (!$authplugin->is_internal() and $authplugin->can_change_password() and !empty($usernew->newpassword)) {
             if (!$authplugin->user_update_password($usernew, $usernew->newpassword)) {
@@ -203,6 +215,24 @@ if ($usernew = $userform->get_data()) {
             // Auth update failed.
             print_error('cannotupdateuseronexauth', '', '', $user->auth);
         }
+        
+        /************Updating all the role assignment code*************/
+        if($role_assignment = $DB->get_records('role_assignments', array('userid' => $usernew->id))){
+            
+//            $newrole_assignment->roleid = $usernew->user_role;
+//            $newrole_assignment->timemodified = time();
+//            $role_assignment->modifierid = $USER->id;
+            
+            $sql = "UPDATE {role_assignments} SET roleid = ?, timemodified = ?, modifierid = ? WHERE userid =?";
+            
+            
+            
+            $DB->execute($sql, array($usernew->user_role, time(), $USER->id, $usernew->id));
+            
+        }else{
+            role_assign($usernew->user_role, $usernew->id, 1);
+        }
+        
         user_update_user($usernew, false);
 
         // Set new password if specified.

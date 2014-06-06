@@ -40,7 +40,7 @@ class user_editadvanced_form extends moodleform {
      * Define the form.
      */
     public function definition() {
-        global $USER, $CFG, $COURSE;
+        global $USER, $CFG, $COURSE, $DB;
 
         $mform = $this->_form;
         $editoroptions = null;
@@ -71,6 +71,27 @@ class user_editadvanced_form extends moodleform {
 
         // Print the required moodle fields first.
         $mform->addElement('header', 'moodle', $strgeneral);
+        
+        
+        /* extra role dropdown for site level inrollment of users at the time of adding them into system
+         * By:Aditya
+         * Time Created: 06june14
+         * Last modyfied: 06june14
+         */
+        $roles  = $DB->get_records('role', array());
+        
+        $role_choices = array();
+        foreach($roles as $role){
+            if(in_array($role->shortname, $CFG->allowedroles))
+                    $role_choices[$role->id] = get_string("role_".$role->shortname);
+        }
+        $role_choices = array('' => get_string('selectarole') . '...') + $role_choices;
+        
+//        print_object($role_choices);
+        $mform->addElement('select', 'user_role', get_string('role'), $role_choices);
+        $mform->addRule('user_role', $strrequired, 'required', null, 'client');
+        $mform->setType('user_role', PARAM_RAW);
+
 
         $mform->addElement('text', 'username', get_string('username'), 'size="20"');
         $mform->addRule('username', $strrequired, 'required', null, 'client');
