@@ -62,9 +62,13 @@ echo $OUTPUT->doctype() ?>
     <?php include('header.php'); ?>
 
 <div id="page" class="container-fluid">
-
+    <div class="nav-collapse collapse clearfix">
+        <?php echo $OUTPUT->custom_menu(); ?>
+    </div>
+    
     <header id="page-header" class="clearfix">
         <?php // echo $html->heading; ?>
+        
         <div id="page-navbar" class="clearfix">
             <nav class="breadcrumb-nav"><?php echo $OUTPUT->navbar(); ?></nav>
             <div class="breadcrumb-button"><?php echo $OUTPUT->page_heading_button(); ?></div>

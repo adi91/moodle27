@@ -25,3 +25,15 @@ body {
 }
 #page-header {padding-top: 35px;}
 a.logo {width: 20%;height: 90px;}
+
+.nav > li > a {
+    color: #777777;
+    float: none;
+    padding: 10px 15px;
+    text-decoration: none;
+    text-shadow: 0 1px 0 #FFFFFF;
+}
+
+.nav > li {
+    float: left;
+}s
