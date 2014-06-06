@@ -2025,3 +2025,14 @@ $string['yourself'] = 'yourself';
 $string['yourteacher'] = 'your {$a}';
 $string['yourwordforx'] = 'Your word for \'{$a}\'';
 $string['zippingbackup'] = 'Zipping backup';
+
+
+// Custom changes for various application customization 
+// Aditya 
+// Starts at -05june14
+$string['selectarole'] = 'Select a role';
+$string['role_manager'] = 'Manager';
+$string['role_editingteacher'] = 'Teacher';
+$string['role_teacher'] = 'Panelist';
+$string['role_student'] = 'Candidate';
+$string['role_user'] = 'User';
