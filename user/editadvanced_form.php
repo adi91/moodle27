@@ -143,7 +143,7 @@ class user_editadvanced_form extends moodleform {
         $mform->disabledIf('preference_auth_forcepasswordchange', 'createpassword', 'checked');
 
         // Shared fields.
-        useredit_shared_definition($mform, $editoroptions, $filemanageroptions);
+        useredit_shared_definition($mform, $editoroptions, $filemanageroptions, 'editdvanced');
 
         // Next the customisable profile fields.
         profile_definition($mform, $userid);
@@ -293,14 +293,17 @@ class user_editadvanced_form extends moodleform {
                 }
             }
         }
-
-        if (!$user or $user->email !== $usernew->email) {
-            if (!validate_email($usernew->email)) {
-                $err['email'] = get_string('invalidemail');
-            } else if ($DB->record_exists('user', array('email' => $usernew->email, 'mnethostid' => $CFG->mnet_localhost_id))) {
-                $err['email'] = get_string('emailexists');
+        
+        if($usernew->email !== ''){
+            if (!$user or $user->email !== $usernew->email) {
+                if (!validate_email($usernew->email)) {
+                    $err['email'] = get_string('invalidemail');
+                } else if ($DB->record_exists('user', array('email' => $usernew->email, 'mnethostid' => $CFG->mnet_localhost_id))) {
+                    $err['email'] = get_string('emailexists');
+                }
             }
         }
+        
 
         // Next the customisable profile fields.
         $err += profile_validation($usernew, $files);

@@ -72,7 +72,7 @@ class user_edit_form extends moodleform {
         $mform->addElement('header', 'moodle', $strgeneral);
 
         // Shared fields.
-        useredit_shared_definition($mform, $editoroptions, $filemanageroptions);
+        useredit_shared_definition($mform, $editoroptions, $filemanageroptions, 'edit');
 
         // Extra settigs.
         if (!empty($CFG->disableuserimages)) {

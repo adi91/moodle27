@@ -184,11 +184,22 @@ function useredit_update_interests($user, $interests) {
  * @param array|null $editoroptions
  * @param array|null $filemanageroptions
  */
-function useredit_shared_definition(&$mform, $editoroptions = null, $filemanageroptions = null) {
+function useredit_shared_definition(&$mform, $editoroptions = null, $filemanageroptions = null, $page = null) {
     global $CFG, $USER, $DB;
 
     $user = $DB->get_record('user', array('id' => $USER->id));
+    
     useredit_load_preferences($user, false);
+    
+    $user_id = ($page == 'edit') ? $user->id : -1;
+    if(isset($_GET['id']))
+        $user_id = $_GET['id'];
+    
+    
+    if($user_id){
+        $edit_user = $DB->get_record('user', array('id' => $user_id));
+//        print_object($edit_user);
+    }
 
     $strrequired = get_string('required');
 
@@ -214,7 +225,12 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
         $mform->addElement('static', 'emailpending', get_string('email'), $notice);
     } else {
         $mform->addElement('text', 'email', get_string('email'), 'maxlength="100" size="30"');
-        $mform->addRule('email', $strrequired, 'required', null, 'client');
+        
+        if(isset($edit_user) && is_object($edit_user)){
+            if($edit_user->id == $USER->id)
+                $mform->addRule('email', $strrequired, 'required', null, 'client');
+        }
+        
         $mform->setType('email', PARAM_EMAIL);
     }
 
@@ -283,7 +299,50 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
 //        $mform->setDefault('preference_htmleditor', '');
 //        $mform->setType('preference_htmleditor', PARAM_PLUGIN);
 //    }
+    
+    $mform->addElement('text', 'phone2', get_string('phone2'), 'maxlength="20" size="25"');
+    $mform->setType('phone2', PARAM_NOTAGS);
+            if(isset($edit_user) && is_object($edit_user)){
+                if($edit_user->id == $USER->id)
+                    $mform->addRule('phone2', $strrequired, 'required', null, 'client');
+            }
+                
+                
 
+    $mform->addElement('text', 'address', get_string('address'), 'maxlength="255" size="25"');
+    $mform->setType('address', PARAM_RAW);
+        if(isset($edit_user) && is_object($edit_user)){
+            if($edit_user->id == $USER->id)
+                $mform->addRule('address', $strrequired, 'required', null, 'client');
+        }
+    
+    $mform->addElement('date_selector', 'dob', get_string('dob'));
+        if(isset($edit_user) && is_object($edit_user)){
+            if($edit_user->id == $USER->id)
+                $mform->addRule('dob', $strrequired, 'required', null, 'client');
+        }
+    
+    $mform->addElement('text', 'total_exp', get_string('total_exp'), 'maxlength="255" size="25"');
+    $mform->setType('total_exp', PARAM_RAW);
+        if(isset($edit_user) && is_object($edit_user)){
+            if($edit_user->id == $USER->id)
+                $mform->addRule('total_exp', $strrequired, 'required', null, 'client');
+        }
+    
+    $mform->addElement('text', 'sec_skill', get_string('sec_skill'), 'maxlength="255" size="25"');
+    $mform->setType('sec_skill', PARAM_RAW);
+    
+    $radioarray=array();
+    $radioarray[] =& $mform->createElement('radio', 'wchange_time', '', get_string('immediate'), 'immediate');
+    $radioarray[] =& $mform->createElement('radio', 'wchange_time', '', get_string('six_months'), 'six_months');
+    $radioarray[] =& $mform->createElement('radio', 'wchange_time', '', get_string('one_year'), 'one_year');
+    $mform->addGroup($radioarray, 'wchange_time', get_string('change_dur'), array(' '), false);
+    
+    if(isset($edit_user) && is_object($edit_user)){
+        if($edit_user->id == $USER->id)
+            $mform->addRule('wchange_time', $strrequired, 'required', null, 'client');
+    }
+    
     $mform->addElement('text', 'city', get_string('city'), 'maxlength="120" size="21"');
     $mform->setType('city', PARAM_TEXT);
     if (!empty($CFG->defaultcity)) {
@@ -406,11 +465,11 @@ function useredit_shared_definition(&$mform, $editoroptions = null, $filemanager
     $mform->addElement('text', 'phone1', get_string('phone'), 'maxlength="20" size="25"');
     $mform->setType('phone1', PARAM_NOTAGS);
 
-    $mform->addElement('text', 'phone2', get_string('phone2'), 'maxlength="20" size="25"');
-    $mform->setType('phone2', PARAM_NOTAGS);
-
-    $mform->addElement('text', 'address', get_string('address'), 'maxlength="255" size="25"');
-    $mform->setType('address', PARAM_TEXT);
+//    $mform->addElement('text', 'phone2', get_string('phone2'), 'maxlength="20" size="25"');
+//    $mform->setType('phone2', PARAM_NOTAGS);
+//
+//    $mform->addElement('text', 'address', get_string('address'), 'maxlength="255" size="25"');
+//    $mform->setType('address', PARAM_TEXT);
 }
 
 /**

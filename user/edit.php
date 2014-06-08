@@ -185,7 +185,8 @@ $userform->set_data($user);
 $emailchanged = false;
 
 if ($usernew = $userform->get_data()) {
-
+//    print_object($usernew);
+//    die;
     $emailchangedhtml = '';
 
     if ($CFG->emailchangeconfirmation) {

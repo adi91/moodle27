@@ -251,24 +251,50 @@ echo '<div class="userprofilebox clearfix"><div class="profilepicture">';
 echo $OUTPUT->user_picture($user, array('size' => 100));
 echo '</div>';
 
-echo '<div class="descriptionbox"><div class="description">';
-// Print the description.
-if ($user->description && !isset($hiddenfields['description'])) {
-    if (!empty($CFG->profilesforenrolledusersonly) && !$currentuser &&
-        !$DB->record_exists('role_assignments', array('userid' => $user->id))) {
-        echo get_string('profilenotshown', 'moodle');
-    } else {
-        $user->description = file_rewrite_pluginfile_urls($user->description, 'pluginfile.php', $usercontext->id, 'user',
-                                                          'profile', null);
-        $options = array('overflowdiv' => true);
-        echo format_text($user->description, $user->descriptionformat, $options);
-    }
-}
-echo '</div>';
-
+echo '<div class="descriptionbox">';
+//print_object($user);
 
 // Print all the little details in a list.
 echo html_writer::start_tag('dl', array('class' => 'list'));
+
+if (isset($identityfields['email']) and ($currentuser
+  or $user->maildisplay == 1
+  or has_capability('moodle/course:useremail', $context)
+  or ($user->maildisplay == 2 and enrol_sharing_course($user, $USER)))) {
+    echo html_writer::tag('dt', get_string('email'));
+    echo html_writer::tag('dd', obfuscate_mailto($user->email, ''));
+}
+
+if ($user->phone2){
+    echo html_writer::tag('dt', get_string('phone2'));
+    echo html_writer::tag('dd', $user->phone2);
+}
+
+if ($user->address){
+    echo html_writer::tag('dt', get_string('address'));
+    echo html_writer::tag('dd', $user->address);
+}
+
+if ($user->dob){
+    echo html_writer::tag('dt', get_string('dob'));
+    echo html_writer::tag('dd', userdate($user->dob));
+}
+
+if ($user->total_exp){
+    echo html_writer::tag('dt', get_string('total_exp'));
+    echo html_writer::tag('dd', $user->total_exp);
+}
+
+if ($user->sec_skill){
+    echo html_writer::tag('dt', get_string('sec_skill'));
+    echo html_writer::tag('dd', $user->sec_skill);
+}
+
+if ($user->wchange_time){
+    echo html_writer::tag('dt', get_string('change_dur'));
+    echo html_writer::tag('dd', get_string($user->wchange_time));
+}
+
 if (!isset($hiddenfields['country']) && $user->country) {
     echo html_writer::tag('dt', get_string('country'));
     echo html_writer::tag('dd', get_string($user->country, 'countries'));
@@ -307,14 +333,6 @@ if (isset($identityfields['department']) && $user->department) {
 if (isset($identityfields['idnumber']) && $user->idnumber) {
     echo html_writer::tag('dt', get_string('idnumber'));
     echo html_writer::tag('dd', $user->idnumber);
-}
-
-if (isset($identityfields['email']) and ($currentuser
-  or $user->maildisplay == 1
-  or has_capability('moodle/course:useremail', $context)
-  or ($user->maildisplay == 2 and enrol_sharing_course($user, $USER)))) {
-    echo html_writer::tag('dt', get_string('email'));
-    echo html_writer::tag('dd', obfuscate_mailto($user->email, ''));
 }
 
 if ($user->url && !isset($hiddenfields['webpage'])) {
@@ -449,6 +467,21 @@ if (!empty($CFG->enablebadges)) {
 }
 
 echo html_writer::end_tag('dl');
+
+echo '<div class="description">';
+// Print the description.
+if ($user->description && !isset($hiddenfields['description'])) {
+    if (!empty($CFG->profilesforenrolledusersonly) && !$currentuser &&
+        !$DB->record_exists('role_assignments', array('userid' => $user->id))) {
+        echo get_string('profilenotshown', 'moodle');
+    } else {
+        $user->description = file_rewrite_pluginfile_urls($user->description, 'pluginfile.php', $usercontext->id, 'user',
+                                                          'profile', null);
+        $options = array('overflowdiv' => true);
+        echo format_text($user->description, $user->descriptionformat, $options);
+    }
+}
+echo '</div>';
 echo "</div></div>"; // Closing desriptionbox and userprofilebox.
 
 echo $OUTPUT->custom_block_region('content');
