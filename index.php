@@ -30,6 +30,7 @@
 
     require_once('config.php');
     require_once($CFG->dirroot .'/course/lib.php');
+    require_once($CFG->dirroot .'/local/talentain/talentain_lib.php');
     require_once($CFG->libdir .'/filelib.php');
 
     redirect_if_major_upgrade_required();
@@ -63,7 +64,10 @@
     if ($hassiteconfig && moodle_needs_upgrading()) {
         redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
     }
-
+    
+    if(is_student()){
+        redirect($CFG->wwwroot .'/user/edit.php', array('id' => $USER->id));
+    }
     if (get_home_page() != HOMEPAGE_SITE) {
         // Redirect logged-in users to My Moodle overview if required
         if (optional_param('setdefaulthome', false, PARAM_BOOL)) {
