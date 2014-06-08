@@ -74,7 +74,10 @@ echo $OUTPUT->doctype() ?>
 
 <div id="page" class="container-fluid">
     <div class="nav-collapse collapse clearfix">
-        <?php echo $OUTPUT->custom_menu(); ?>
+        <?php
+//            echo $OUTPUT->custom_menu(); 
+            include('custom_menu.php');
+        ?>
     </div>
     
     <header id="page-header" class="clearfix">
