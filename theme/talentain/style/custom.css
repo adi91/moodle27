@@ -1,5 +1,63 @@
 /* Custom CSS
 -------------------------*/
+.yui3-skin-sam .yui3-panel .yui3-button{
+    margin: 0.3em 0.6em;
+}
+.yui3-skin-sam .yui3-panel .yui3-panel-content .yui3-widget-bd{
+    text-align: center;
+    padding: 1.5em 0 1.8em;
+}
+.yui3-skin-sam .yui3-panel .yui3-panel-content .yui3-widget-ft{
+    border-radius: 0 0 3px 3px;
+    background-color: #F5F4F1;
+    border-top: solid 1px #EAE6DB;
+}
+.yui3-skin-sam .yui3-panel .yui3-panel-content {
+    background: none repeat scroll 0 0 white;
+    border: 1px solid #A9A9A9;
+    box-shadow: 0 0 15px rgba(0,0,0,0.4);
+    border-radius: 3px;
+    text-align: center;
+}
+
+.yui3-panel .yui3-widget-bd .message{
+    width: 70%;
+    margin: 0 auto;
+    text-align: left;
+    padding: 11px 0 14px 50px;
+} 
+.yui3-panel .yui3-widget-bd .modal-none{
+    background-image: none;
+    padding-left: 0;    
+    width: 82%;
+    text-align: center;
+} 
+.yui3-panel .yui3-widget-bd .modal-bubble{
+    background-repeat: no-repeat;
+    background-image: url([[pix:theme|modal/icon_bubble]]);
+} 
+.yui3-panel .yui3-widget-bd .modal-error{
+    background-repeat: no-repeat;
+    background-image: url([[pix:theme|modal/icon_error]]);
+}
+.yui3-panel .yui3-widget-bd .modal-info{
+    background-repeat: no-repeat;
+    background-image: url([[pix:theme|modal/icon_information]]);
+}
+.yui3-panel .yui3-widget-bd .modal-question{
+    background-repeat: no-repeat;
+    background-image: url([[pix:theme|modal/icon_question]]);
+}
+.yui3-panel .yui3-widget-bd .modal-warn{
+    background-repeat: no-repeat;
+    background-image: url([[pix:theme|modal/icon_warn]]);
+}
+.yui3-panel .yui3-widget-bd .modal-success{
+    background-repeat: no-repeat;
+    background-image: url([[pix:theme|modal/icon_success]]);
+}
+
+
 a.logo {
     background: url([[setting:logo]]) no-repeat 0 0;
     display: block;
@@ -36,4 +94,16 @@ a.logo {width: 20%;height: 90px;}
 
 .nav > li {
     float: left;
-}s
+}
+#add_student_filter lable{
+    display: inline !important;
+}
+#class-div {
+    background: linear-gradient(to bottom, #44cfeb 0%, #009fbf 100%) repeat scroll 0 0 rgba(0, 0, 0, 0);
+    border-radius: 4px;
+    color: #fff;
+    font-weight: bold;
+    height: 27px;
+    padding: 4px 0 0 13px;
+    text-transform: capitalize;
+}

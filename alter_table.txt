@@ -4,3 +4,6 @@ ALTER TABLE `mdl_user` ADD `dob` BIGINT(10) NOT NULL ;
 ALTER TABLE `mdl_user` ADD `total_exp` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL ;
 ALTER TABLE `mdl_user` ADD `sec_skill` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL ;
 ALTER TABLE `mdl_user` ADD `wchange_time` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL ;
+
+Date - 20/june/2014 @aditya
+ALTER TABLE `mdl_role_assignments` ADD `course_level` VARCHAR(6) NULL DEFAULT NULL ;

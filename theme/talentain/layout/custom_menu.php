@@ -95,6 +95,12 @@ global $CFG, $USER, $DB;
             <li>
                 <a href="<?php echo new moodle_url('/user/editadvanced.php', array('id' =>-1)); ?>" title="Add new users ">Add new users </a>
             </li>
+            <li>
+                <a href="<?php echo new moodle_url('/local/add_student.php'); ?>" title="Add users to class">Add users to class</a>
+            </li>
+            <li>
+                <a href="<?php echo new moodle_url('/local/users.php'); ?>" title="Search Users">Search Users</a>
+            </li>
             <li class="dropdown-submenu">
                 <a title="Moodle development" data-toggle="dropdown" class="dropdown-toggle" href="https://moodle.org/development">Moodle development</a>
                 <ul class="dropdown-menu">

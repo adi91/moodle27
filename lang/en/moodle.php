@@ -2044,3 +2044,5 @@ $string['change_dur'] = 'Looking for change';
 $string['immediate'] = 'Immediate';
 $string['six_months'] = '6 months';
 $string['one_year'] = '1 year';
+$string['level'] = 'Level';
+$string['returntoadduser'] = 'Return to add user';
