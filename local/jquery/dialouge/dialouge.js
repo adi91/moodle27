@@ -47,17 +47,30 @@ function show_ok_modal_message(message, classname, evt){
     evt.preventDefault(evt);
 }
 
-Y.one('#addstudenttoclass_submitbutton').on('click', function(evt){
-    var message = "Please select course and respective level.";
-    var classname = "modal-info";
-    show_ok_modal_message(message, classname, evt);
-});
+//Y.one('#addstudenttoclass_submitbutton').on('click', function(evt){
+//    var message = "Please select course and respective level.";
+//    var classname = "modal-info";
+//    show_ok_modal_message(message, classname, evt);
+//});
 
-Y.one('.addstudenttoclass_submitbutton_form').on('click', function(evt){
-     alert('here');
-    var message = "Please select course and respective level.";
-    var classname = "modal-info";
-    show_ok_modal_message(message, classname, evt);
+if( $('.addstudenttoclass_submitbutton').length ){
+    $( ".addstudenttoclass_submitbutton" ).click(function(evt) {
+        var message = "Please select course and respective level.";
+        var classname = "modal-info";
+        show_ok_modal_message(message, classname, evt);
+   });
+}
+
+$( ".addstudenttoclass_submitbutton_form" ).click(function(evt) {
+    if ( $('.stutoadd:checked').length < 1 ) {
+          var message = "Please select a candidate.";
+          var classname = "modal-warn";
+          show_ok_modal_message(message, classname, evt);
+      event.preventDefault();
+    }else{
+        $( "#assignstudent" ).submit();
+    }
+    return true;
 });
 
 //Y.one('#assignstudent').on('submit', function(evt){
@@ -87,6 +100,6 @@ function user_added_to_course_success(){
     window.href = window.href;
 }
 
-if($('a').hasClass('download_complete')){
-    p.location = p.location;
+if($('div').hasClass('student_added_tocorse_success')){
+    user_added_to_course_success();
 }

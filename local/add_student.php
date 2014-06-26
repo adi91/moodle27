@@ -29,7 +29,7 @@ $dir            = optional_param('dir', 'ASC', PARAM_ALPHA);
 $params         = null;
 
 $baseurl        = new moodle_url('/local/add_student.php', array('id' =>0, 'perpage' => $perpage, 'course' => $courseid, 'level'=> $levelid, 'sort'=>$sort, 'dir'=>$dir));
-$sort_baseurl        = new moodle_url('/local/add_student.php', array('id' =>0, 'perpage' => $perpage, 'course' => $courseid, 'level'=> $levelid));
+$sort_baseurl   = new moodle_url('/local/add_student.php', array('id' =>0, 'perpage' => $perpage, 'course' => $courseid, 'level'=> $levelid));
 
 //$group              = $DB->get_record('groups', array('id'=>$groupid), '*', MUST_EXIST);
 //$user               = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
@@ -71,12 +71,15 @@ if ($action == true && $password != null) {
 
 echo $OUTPUT->header();
 
-if(isset($hiddenaddstudent) && $hiddenaddstudent ==1){
+$arruser   = optional_param_array('user', array(), PARAM_INT);
+$form_courseid  = optional_param('course', 0, PARAM_INT);
+$course_context = context_course::instance($form_courseid);
+
+//print_object($arruser);
+$success = 0;
+if($arruser){
 	//$arruser = optional_param('user', '', PARAM_TEXT);
-	$arruser   = optional_param_array('user', array(), PARAM_INT);
-	$form_courseid  = optional_param('course', 0, PARAM_INT);
-    $course_context = context_course::instance($form_courseid);
-    
+
 	if($arruser){
 		foreach($arruser as $key){
 
@@ -92,13 +95,25 @@ if(isset($hiddenaddstudent) && $hiddenaddstudent ==1){
 //			$DB->insert_record('groups_members', $record, false);
             if(!$DB->get_record('role_assignments', array('contextid' => $course_context->id, 'userid' => $key))){
                 $DB->insert_record('role_assignments', $role_assignment, false);
+                $success++;
             }
 		}
+        unset($arruser);
+        if($success){
+            $message = get_string('user_added_tocourse_successfully');
+            echo '<span class="btn" class="student_added_tocorse_success" href="'.$baseurl.'" ></span><br>';
+            
+            echo "<div class='student_added_tocorse_success' style='display:block;text-align:center;'>";
+            echo '<div style="padding-bottom:15px;">'.$message.'</div>';
+            echo '<a class="btn" id="id_cancel_success" href="'.$baseurl.'" >'.get_string('returntocourseenrolment').'</a>';
+            echo "</div>";
+            echo $OUTPUT->footer();
+            die;
+        }
         
-        echo "<script>user_added_to_course_success();</script>";
 //		echo "<div class='notifysuccess_content' style='display:block;text-align:center;'>";
 //		echo '<div style="padding-bottom:15px;">User added successfully</div>';
-//		echo '<a class="btn" id="id_cancel_success" href="'.$baseurl.'" >'.get_string('returntoadduser').'</a>';
+//		echo '<span class="btn" id="student_added_tocorse_success" href="'.$baseurl.'" ></a>';
 //		echo "</div>";
 //		echo $OUTPUT->footer();
 //		die;
@@ -252,13 +267,11 @@ foreach($courselist as $course){
     
         
     echo '<form id="assignstudent" method="post">';
-        echo '<input type="hidden" name="group" id="group" value="'.$courseid.'" />';
         echo '<input type="hidden" name="id" id="id" value="'.$userid.'" />';
   
         echo '<div class="class_users_div">';
-    
-        echo html_writer::table($table); echo '</div>'; 
-    
+        echo html_writer::table($table);
+        echo '</div>'; 
         echo '<div>';
         echo $OUTPUT->paging_bar($usercount, $page, $perpage, $baseurl);
         echo '</div>';
@@ -269,7 +282,7 @@ foreach($courselist as $course){
             if($courseid && $levelid){
                 echo '<input type="button" name="add" class="addstudenttoclass_submitbutton_form" id="id_submitbutton" value="Add" />';
             }else{
-                echo '<input type="button" name="add" id="addstudenttoclass_submitbutton" value="Add" />';
+                echo '<input type="button" name="add" id="addstudenttoclass_submitbutton" class="addstudenttoclass_submitbutton" value="Add" />';
             }
             
             echo '<input type="submit" class="btn-cancel" name="cancel" id="id_cancel" value="Cancel" />';	
