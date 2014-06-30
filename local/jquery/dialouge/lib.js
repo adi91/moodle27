@@ -18,10 +18,7 @@ function checked_all(checked) {
     });
 }
 
-function addtoclass_form_validation(ele){
-    alert('pop');
-
-    
+function addtoclass_form_validation(ele){    
         var dialog = new Y.Panel({
             contentBox : Y.Node.create('<div id="dialog" />'),
             bodyContent: '<div class="message icon-warn">Are you sure you want to [take some action]?</div>',

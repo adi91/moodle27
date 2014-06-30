@@ -21,12 +21,12 @@
  * @package   core_group
  */
 require_once('../config.php');
-require_once('lib.php');
-require_once($CFG->libdir .'/poweruplib.php');
+require_once($CFG->dirroot.'/course/lib.php');
+//require_once($CFG->libdir .'/poweruplib.php');
 
-require_once($CFG->libdir.'/coursecatlib.php');
+//require_once($CFG->libdir.'/coursecatlib.php');
 
-$courseid       = required_param('id', PARAM_INT);
+$courseid       = optional_param('courseid',1, PARAM_INT);
 $groupid        = optional_param('group', false, PARAM_INT);
 $instituateid   = optional_param('instituate', 0, PARAM_INT);
 $campusid       = optional_param('campus', 0, PARAM_INT);
@@ -166,150 +166,16 @@ switch ($action) {
 $strgroups = get_string('groups');
 $strparticipants = get_string('participants');
 /// Print header
-$PAGE->set_title(get_string('powerup') . ' : '.  get_string('classmanagment'));
 $PAGE->set_heading($course->fullname);
-$PAGE->set_pagelayout('noblock');
+$PAGE->set_pagelayout('base');
 echo $OUTPUT->header();
 
-if(has_capability('moodle/site:viewreports', $context) || is_institute_admin()){
-    echo teacher_menue('Manage', $course->id);
-}
-// Add tabs
-//$currenttab = 'groups';
-//require('tabs.php');
-
-    $currenttab = 'classmanagment';
-    $row = array();
-    $row[] = new tabobject('classmanagment',
-                           new moodle_url('/group/group_class.php', array('id' => $courseid)),
-                           get_string('classmanagment'));
-	$row[] = new tabobject('browse_users',
-                           new moodle_url('/group/browse_user.php', array('id' => $courseid)),
-                           get_string('browse_users'));
-    echo '<div class="groupdisplay">';
-    echo $OUTPUT->tabtree($row, $currenttab);
-    echo '</div>';
-    
-    
-$disabled = 'disabled="disabled"';
-if (ajaxenabled()) {
-    // Some buttons are enabled if single group selected
-    $showaddmembersform_disabled = $singlegroup ? '' : $disabled;
-    $showeditgroupsettingsform_disabled = $singlegroup ? '' : $disabled;
-    $deletegroup_disabled = count($groupids)>0 ? '' : $disabled;
-} else {
-    // Do not disable buttons. The buttons work based on the selected group,
-    // which you can change without reloading the page, so it is not appropriate
-    // to disable them if no group is selected.
-    $showaddmembersform_disabled = '';
-    $showeditgroupsettingsform_disabled = '';
-    $deletegroup_disabled = '';
-}
 
 
 
 //echo $OUTPUT->heading(format_string($course->shortname, true, array('context' => $context)) .' '.$strgroups, 3);
 	echo '<div class="tab_container">';
-        
-    
-    /********************Instituate section for super admin**********************/
-    if(is_siteadmin()){
-        
-        $coursecat = coursecat::make_categories_list();
-        $active_coursecat = $DB->get_records('course_categories', array('status' => '1'));
-        $expired_coursecat = $DB->get_records('course_categories', array('status' => '0'));
-        
-        $active_inst_displaylist = array();
-        $expired_inst_displaylist = array();
-
-        foreach($active_coursecat as $a_cat){
-            if($a_cat->id!=1){
-                $active_inst_displaylist[$a_cat->id] = $a_cat->name;
-            }
-        }
-        foreach($expired_coursecat as $e_cat){
-            if($e_cat->id!=1){
-                $expired_inst_displaylist[$e_cat->id] = $e_cat->name;
-            }
-        }
-        natcasesort($active_inst_displaylist);
-        natcasesort($expired_inst_displaylist);
-        
-//        print_object($active_inst_displaylist);
-//        print_object($expired_inst_displaylist);
-        
-        $createnewinst_url  = new moodle_url($CFG->wwwroot."/course/editcategory.php", array('parent' => 0));
-        $editinst_url       = new moodle_url($CFG->wwwroot."/course/editcategory.php", array('id' => $instituateid));
-        $deleteinst_url     = new moodle_url($CFG->wwwroot."/group/delete_instituate.php", array('course' => $courseid, 'id' => $instituateid));
-        
-        $inst_r_url         = new moodle_url('/group/group_class.php', array('id'=>$courseid));
-        
-        
-        
-        echo '<div style="border: 1px solid #dddddd; height: 90px;border-radius:4px 4px;">';
-            echo '<div id="class-div">'.get_string('institute').'</div>';
-                echo '<div>';
-                    echo '<div style="float:left;padding:15px 0 0 11px;">';
-                        echo '<div class="selectclass1">';                            
-                            echo '<div class="singleselect">';
-                            // Single select raw html source gor group institution change @ 30 jan 14 @ditya
-                                echo '<form method="get" action="group_class.php" id="single_select_f52e8f59ebcc621">';
-                                    echo '<div>';
-                                    echo '<input type="hidden" name="id" value="2">';
-                                    echo '<label for="single_select52e8f59ebcc622">Institute</label>';
-                                    echo '<select id="single_select52e8f59ebcc622" class="select singleselect" onchange="this.form.submit()" name="instituate">';
-                                        echo '<option value="">Select Institute</option>';
-                                        
-                                        echo '<optgroup label="Active Institute">';
-                                            foreach($active_inst_displaylist as $key=>$a_inst){
-                                                $selected = ($key == $instituateid)?"selected":"";
-                                                echo '<option value="'.$key.'" '.$selected.'>'.$a_inst.'</option>';
-                                            }
-                                        echo '</optgroup>';
-                                        
-                                        echo '<optgroup label="Expired Institute">';
-                                            foreach($expired_inst_displaylist as $key=>$e_inst){
-                                                $selected = ($key == $instituateid)?"selected":"";
-                                                echo '<option value="'.$key.'" '.$selected.'>'.$e_inst.'</option>';
-                                            }
-                                        echo '</optgroup>';
-                                        
-                                    echo '</select>';
-                                    echo '<noscript class="inline">&lt;div&gt;&lt;input type="submit" value="Go" /&gt;&lt;/div&gt;</noscript>';
-                                    echo '</div>';
-                                echo '</form>';
-                                
-                                
-                            echo '</div>';
-                            
-                            
-                        echo '</div>';
-                    echo '</div>';
-                    
-                    echo '<div style="  float: right;padding: 15px 10px 0 0;">';
-                        
-
-                        if($instituateid){
-                            echo '<a class="dialouge btn btn-grey inst_dialouge" href="'.$deleteinst_url.'" return_url="'.$inst_r_url.'" data-title="'.get_string('remove').'" data-width="500" data-height="230">'.get_string('remove').'</a>';
-                            
-                            echo '<a class="dialouge btn btn-grey inst_dialouge" href="'.$editinst_url.'" return_url="'.$inst_r_url.'" data-title="'.get_string('edit_institute').'" data-width="700" data-height="600">'.get_string('edit_institute').'</a>';
-                            
-                        }else{
-                            echo '<a class="btn btn-grey" onclick="alert(\''.get_string('selectainstitute').'\')" data-title="'.get_string('remove').'" data-width="500" data-height="230">'.get_string('remove').'</a>';
-                            
-                            echo '<a class="btn btn-grey" onclick="alert(\''.get_string('selectainstitute').'\')" data-title="'.get_string('edit_institute').'" data-width="450" data-height="335">'.get_string('edit_institute').'</a>';
-                        }
-                        
-                        echo '<a class="dialouge btn btn-grey inst_dialouge" href="'.$createnewinst_url.'" data-title="'.get_string('add_institute').'" data-width="700" return_url="'.$inst_r_url.'" data-height="600">'.get_string('new_institute').'</a>';
-                    echo '</div>';
-                    
-            echo '</div>';
-        echo '</div>';  
-    }
-    
-    
-    /********************Instituate section for super admin**********************/
-    
+          
     
     /********************Campus section for super admin**********************/
     if(is_siteadmin() || is_institute_admin()){

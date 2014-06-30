@@ -72,13 +72,14 @@ if ($action == true && $password != null) {
 echo $OUTPUT->header();
 
 $arruser   = optional_param_array('user', array(), PARAM_INT);
-$form_courseid  = optional_param('course', 0, PARAM_INT);
-$course_context = context_course::instance($form_courseid);
+
 
 //print_object($arruser);
 $success = 0;
 if($arruser){
 	//$arruser = optional_param('user', '', PARAM_TEXT);
+    $form_courseid  = optional_param('course', 0, PARAM_INT);
+    $course_context = context_course::instance($form_courseid);
 
 	if($arruser){
 		foreach($arruser as $key){

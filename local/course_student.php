@@ -28,8 +28,8 @@ $sort           = optional_param('sort', 'firstname', PARAM_RAW);
 $dir            = optional_param('dir', 'ASC', PARAM_ALPHA);
 $params         = null;
 
-$baseurl        = new moodle_url('/local/add_student.php', array('id' =>0, 'perpage' => $perpage, 'course' => $courseid, 'level'=> $levelid, 'sort'=>$sort, 'dir'=>$dir));
-$sort_baseurl        = new moodle_url('/local/add_student.php', array('id' =>0, 'perpage' => $perpage, 'course' => $courseid, 'level'=> $levelid));
+$baseurl        = new moodle_url('/local/course_student.php', array('id' =>0, 'perpage' => $perpage, 'course' => $courseid, 'level'=> $levelid, 'sort'=>$sort, 'dir'=>$dir));
+$sort_baseurl        = new moodle_url('/local/course_student.php', array('id' =>0, 'perpage' => $perpage, 'course' => $courseid, 'level'=> $levelid));
 
 //$group              = $DB->get_record('groups', array('id'=>$groupid), '*', MUST_EXIST);
 //$user               = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
@@ -60,6 +60,7 @@ $PAGE->requires->js(new moodle_url($CFG->wwwroot."/local/jquery/jquery.ui1.9.2.j
 $PAGE->requires->js(new moodle_url($CFG->wwwroot."/local/jquery/jquery.livequery.js"), false);
 
 $PAGE->requires->js(new moodle_url($CFG->wwwroot."/local/jquery/dialouge/lib.js"), false);
+$PAGE->requires->js(new moodle_url($CFG->wwwroot."/local/jquery/dialouge/dialouge.js"), false);
 
 if ($cancel) {
     redirect($returnurl);
@@ -70,7 +71,9 @@ if ($action == true && $password != null) {
 
 echo $OUTPUT->header();
 
-if(isset($hiddenaddstudent) && $hiddenaddstudent ==1){
+$arruser   = optional_param_array('user', array(), PARAM_INT);
+
+if($arruser){
 	//$arruser = optional_param('user', '', PARAM_TEXT);
 	$arruser   = optional_param_array('user', array(), PARAM_INT);
 	$form_courseid  = optional_param('course', 0, PARAM_INT);
@@ -97,12 +100,8 @@ if(isset($hiddenaddstudent) && $hiddenaddstudent ==1){
 			$DB->insert_record('role_assignments', $role_assignment, false);
 			
 		}
-		// echo '<span style="" >User added successfully</span>';
-		// echo '<a class="redirectsuccess"></a>';
-		// echo $OUTPUT->footer();
-		// die;
-		
-		$url = $CFG->wwwroot.'/local/add_student.php?id=0&course='.$form_courseid;
+
+		$url = $CFG->wwwroot.'/local/course_student.php?id=0&course='.$form_courseid;
         $url = new moodle_url($CFG->wwwroot.'/local/add_user.php', array('id'=>0, 'course'=>$form_courseid, 'level'=>$levelid));
 		echo "<div class='notifysuccess_content' style='display:block;text-align:center;'>";
 		echo '<div style="padding-bottom:15px;">User added successfully</div>';
@@ -115,7 +114,7 @@ if(isset($hiddenaddstudent) && $hiddenaddstudent ==1){
 }
 
 
-$sql = " select u.id, u.firstname, u.lastname, u.email from {user} u LEFT join {role_assignments} ra on u.id = ra.userid where ra.contextid = 1 and ra.roleid = 5";
+$sql = " select u.id, u.firstname, u.lastname, u.email from {user} u LEFT join {role_assignments} ra on u.id = ra.userid ";
 
 //$sql = " select id, firstname, lastname from {user} where id in (select userid from {role_assignments} where contextid =15 and roleid = 5)
 //and id not in (select userid from {groups_members}) and id not in (1,2) ";
@@ -123,31 +122,21 @@ $sql = " select u.id, u.firstname, u.lastname, u.email from {user} u LEFT join {
 
 if($courseid){
     $course_context = context_course::instance($courseid);
-	$sqlwhere1 = "  and u.id not in (select userid from {role_assignments} where contextid =$course_context->id and roleid = 5)";  
-
+	$sql .= " where ra.contextid = $course_context->id ";
 }else{
-	$sqlwhere1 = "";
+	$sql .= "where ra.contextid = 1 ";
+}
+if($levelid){
+	$sql .= " and ra.course_level = $levelid ";
 }
 
-
-//
-//if($firstname){
-//	$sqlwhere1 = "  and firstname like '".$firstname."%'";  
-//}else{
-//	$sqlwhere1 = "";
-//}
-//if($lastname){
-//	$sqlwhere2 = "  and lastname like '".$lastname."%'";  
-//}else{
-//	$sqlwhere2 = "";
-//}
-//$sqlwhere3 = "";
+$sql .= "and roleid = 5";
 
 if ($sort) {
     $sql_sort = " ORDER BY u.$sort $dir";
 }
 
-$sql = $sql.$sqlwhere1;
+//echo $sql.$sql_sort;
 
 //$this->get_records_sql("SELECT $fields FROM {" . $table . "} $select $sort", $params, $limitfrom, $limitnum);
 $users = $DB->get_records_sql("$sql $sql_sort", $params, $page*$perpage, $perpage);
@@ -226,7 +215,7 @@ foreach($courselist as $course){
 	</form>
 <?php    
         
-    $select = new single_select(new moodle_url('add_student.php', array('id' => $courseid)), 'course', $displaylist, $courseid, array(''=>'Select Course'));
+    $select = new single_select(new moodle_url('course_student.php', array('id' => $courseid)), 'course', $displaylist, $courseid, array(''=>'Select Course'));
     $select->set_label(get_string('course'));
 
     echo $OUTPUT->render($select);
@@ -251,7 +240,7 @@ foreach($courselist as $course){
             
         }
         
-        $level_select = new single_select(new moodle_url('add_student.php', array('course' => $courseid)), 'level', $level_displaylist, $levelid, array(''=>'Select Level'));
+        $level_select = new single_select(new moodle_url('course_student.php', array('course' => $courseid)), 'level', $level_displaylist, $levelid, array(''=>'Select Level'));
         $level_select->set_label(get_string('level'));
 
         echo $OUTPUT->render($level_select);
@@ -273,7 +262,7 @@ foreach($courselist as $course){
     ?>
         <div id="formaction">
             <input type="hidden" name="hiddenaddstudent" id="hiddenaddstudent" value="1" />
-            <input type="submit" name="add" id="id_submitbutton" value="Add" />
+            <input type="submit" name="add" id="id_submitbutton" value="Remove" />
             <input type="submit" class="btn-cancel" name="cancel" id="id_cancel" value="Cancel" />		
         </div>
 	</form>
