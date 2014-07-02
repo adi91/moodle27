@@ -73,26 +73,6 @@ $( ".addstudenttoclass_submitbutton_form" ).click(function(evt) {
     return true;
 });
 
-//Y.one('#assignstudent').on('submit', function(evt){
-//    alert($('.stutoadd:checked').length);
-//    return false;
-//    var message = "Please select a candidate.";
-//    var classname = "modal-warn";
-//    show_ok_modal_message(message, classname, evt);
-//});
-
-
-//$( "#id_submitbutton" ).click(function() {
-//    alert('here');
-//  if ( $('.stutoadd:checked').length < 1 ) {
-//        var message = "Please select a candidate.";
-//        var classname = "modal-warn";
-//        show_ok_modal_message(message, classname, evt);
-//    event.preventDefault();
-//  }
-// return;
-//});
-
 function user_added_to_course_success(){
     var message = "User added successfully.";
     var classname = "modal-success";
@@ -103,3 +83,67 @@ function user_added_to_course_success(){
 if($('div').hasClass('student_added_tocorse_success')){
     user_added_to_course_success();
 }
+
+$( "#id_remove_student_button" ).click(function(evt) {
+    
+    var course = $('#id_course').val();
+    var level = $('#id_level').val();
+    
+    if (course != 0) {
+        if ( $('.stutoremove:checked').length < 1 ) {
+              var message = "Please select a candidate.";
+              var classname = "modal-info";
+              show_ok_modal_message(message, classname, evt);
+          event.preventDefault();
+        }else{
+            var dialog = new Y.Panel({
+            contentBox : Y.Node.create('<div id="dialog" />'),
+            bodyContent: '<div class="message"></div>',
+            width      : 410,
+            zIndex     : 6,
+            centered   : true,
+            modal      : false, // modal behavior
+            render     : '.example',
+            visible    : false, // make visible explicitly with .show()
+            buttons    : {
+                    footer: [
+                        {
+                            name     : 'proceed',
+                            label    : 'OK',
+                            action   : 'onOK'
+                        },
+                        {
+                            name     : 'cancel',
+                            label    : 'Cancel',
+                            action   : 'onCancel'
+                        }
+                    ]
+                }
+            });
+
+            dialog.onOK = function (e) {
+                this.hide();
+                document.forms["removestudent"].submit();
+            }
+            dialog.onCancel = function (e) {
+                this.hide();
+                evt.preventDefault(evt);
+            }
+            Y.one('#dialog .message').setHTML("Are you sure, you want to remove these students.");
+
+            classname = 'message modal-warn';
+            Y.one('#dialog .message').set('className', classname);
+
+            dialog.show();
+            evt.preventDefault(evt);
+            
+        }
+    }else{
+        var message = "Please select course and respective level.";
+        var classname = "modal-info";
+        show_ok_modal_message(message, classname, evt); 
+        event.preventDefault();
+    }
+
+    return true;
+});

@@ -50,10 +50,7 @@ $PAGE->set_url($pageurl);
 $PAGE->set_pagelayout('base');
 
 
-
-
 $returnurl = $CFG->wwwroot;
-
 
 $PAGE->requires->js(new moodle_url($CFG->wwwroot."/local/jquery/jquery1.8.3.js"), false);
 $PAGE->requires->js(new moodle_url($CFG->wwwroot."/local/jquery/jquery.ui1.9.2.js"), false);
@@ -61,6 +58,7 @@ $PAGE->requires->js(new moodle_url($CFG->wwwroot."/local/jquery/jquery.livequery
 
 $PAGE->requires->js(new moodle_url($CFG->wwwroot."/local/jquery/dialouge/lib.js"), false);
 $PAGE->requires->js(new moodle_url($CFG->wwwroot."/local/jquery/dialouge/dialouge.js"), false);
+
 
 if ($cancel) {
     redirect($returnurl);
@@ -76,39 +74,20 @@ $arruser   = optional_param_array('user', array(), PARAM_INT);
 if($arruser){
 	//$arruser = optional_param('user', '', PARAM_TEXT);
 	$arruser   = optional_param_array('user', array(), PARAM_INT);
-	$form_courseid  = optional_param('course', 0, PARAM_INT);
-    $course_context = context_course::instance($form_courseid);
+    $course_context = context_course::instance($courseid);
     
 	if($arruser){
 		foreach($arruser as $key){
-//			$record = new stdClass();
-//			$record->userid = $key;
-//			$record->timeadded = time();
-//			$record->component = '';
-//			$record->itemid = '0';
-			
-			$role_assignment = array(
-                'roleid'        => 5,
-                'contextid'     => $course_context->id,
-                'userid'        => $key,
-                'timemodified'  => time(),
-                'modifierid'    => $USER->id,
-                'course_level'  => $levelid,
-            );
-			
-//			$DB->insert_record('groups_members', $record, false);
-			$DB->insert_record('role_assignments', $role_assignment, false);
-			
+            $DB->delete_records("role_assignments", array("userid" => $key, "contextid" => $course_context->id));
 		}
 
-		$url = $CFG->wwwroot.'/local/course_student.php?id=0&course='.$form_courseid;
-        $url = new moodle_url($CFG->wwwroot.'/local/add_user.php', array('id'=>0, 'course'=>$form_courseid, 'level'=>$levelid));
-		echo "<div class='notifysuccess_content' style='display:block;text-align:center;'>";
-		echo '<div style="padding-bottom:15px;">User added successfully</div>';
-		echo '<a class="btn" id="id_cancel_success" href="'.$url.'" >'.get_string('returntoadduser').'</a>';
-		echo "</div>";
-		echo $OUTPUT->footer();
-		die;
+//        $url = new moodle_url($CFG->wwwroot.'/local/course_student.php', array('id'=>0, 'course'=>$courseid, 'level'=>$levelid));
+//		echo "<div class='notifysuccess_content' style='display:block;text-align:center;'>";
+//		echo '<div style="padding-bottom:15px;">'.get_string('user_removed_tocourse_successfully').'</div>';
+//		echo '<a class="btn" id="id_cancel_success" href="'.$url.'" >'.get_string('returntocoursestudent').'</a>';
+//		echo "</div>";
+//		echo $OUTPUT->footer();
+//		die;
 	}
 	
 }
@@ -174,8 +153,6 @@ $firstname_link .= ($sort == 'firstname') ? $sort_icon : '';
 $table->head[] = $firstname_link;
 //$table->head[] = get_string('firstname');
 
-//$table->head[] = html_writer::tag('a', get_string('lastname').($sort == 'lastname'? $sort_icon : ''), array('href'=>new moodle_url($sort_baseurl, array('dir'=>$diricon, 'sort'=>'lastname' )), 'class'=>'sort_link_style'));
-
 $lastname_link = "<a href=\"".new moodle_url($sort_baseurl, array('dir'=>$diricon, 'sort'=>'lastname' ))."\">".get_string('lastname')."</a>";
 $lastname_link .= ($sort == 'lastname') ? $sort_icon : '';
 $table->head[] = $lastname_link;
@@ -188,7 +165,7 @@ $table->head[] = $email_link;
 
 foreach($users as $user){
 	$row = array ();
-	$row[] = '<input type="checkbox" class="stutoadd"  name="user[]" value="'.$user->id.'" style="width:25px !important;" />';
+	$row[] = '<input type="checkbox" class="stutoremove"  name="user[]" value="'.$user->id.'" style="width:25px !important;" />';
 	$row[] = $user->firstname;
 	$row[] = $user->lastname;
 	$row[] = $user->email;
@@ -247,9 +224,9 @@ foreach($courselist as $course){
     }
     
         
-    echo '<form id="assignstudent" method="post" action="">';
-        echo '<input type="hidden" name="group" id="group" value="'.$courseid.'" />';
-        echo '<input type="hidden" name="id" id="id" value="'.$userid.'" />';
+    echo '<form id="removestudent" method="post" action="">';
+        echo '<input type="hidden" name="course" id="id_course" value="'.$courseid.'" />';
+        echo '<input type="hidden" name="level" id="id_level" value="'.$levelid.'" />';
   
         echo '<div class="class_users_div">';
     
@@ -262,7 +239,7 @@ foreach($courselist as $course){
     ?>
         <div id="formaction">
             <input type="hidden" name="hiddenaddstudent" id="hiddenaddstudent" value="1" />
-            <input type="submit" name="add" id="id_submitbutton" value="Remove" />
+            <input type="submit" name="add" id="id_remove_student_button" class="" value="Remove" />
             <input type="submit" class="btn-cancel" name="cancel" id="id_cancel" value="Cancel" />		
         </div>
 	</form>

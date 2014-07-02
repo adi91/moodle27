@@ -2048,3 +2048,5 @@ $string['level'] = 'Level';
 $string['returntoadduser'] = 'Return to add user';
 $string['user_added_tocourse_successfully'] = 'User added to course successfully.';
 $string['returntocourseenrolment'] = 'Continue';
+$string['returntocoursestudent'] = 'Return to course student';
+$string['user_removed_tocourse_successfully'] = 'User removed to course successfully.';
