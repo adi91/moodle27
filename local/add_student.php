@@ -9,6 +9,7 @@
  */
 require_once('../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
+require_once($CFG->dirroot.'/enrol/locallib.php');
 
 
 $courseid           = optional_param('course', 0, PARAM_INT);
@@ -31,11 +32,12 @@ $params         = null;
 $baseurl        = new moodle_url('/local/add_student.php', array('id' =>0, 'perpage' => $perpage, 'course' => $courseid, 'level'=> $levelid, 'sort'=>$sort, 'dir'=>$dir));
 $sort_baseurl   = new moodle_url('/local/add_student.php', array('id' =>0, 'perpage' => $perpage, 'course' => $courseid, 'level'=> $levelid));
 
-//$group              = $DB->get_record('groups', array('id'=>$groupid), '*', MUST_EXIST);
-//$user               = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
-//$course             = $DB->get_record('course', array('id'=>$group->courseid), '*', MUST_EXIST);
+$PAGE->set_url($baseurl);
 
-//$group_institution  = $DB->get_record('campus_classes', array('groupid'=>$groupid), '*', MUST_EXIST);
+$course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+$course_context = context_course::instance($course->id, MUST_EXIST);
+
+
 
 $site = $DB->get_record('course', array('id' => SITEID), '*', MUST_EXIST);
 require_login($site);
@@ -78,26 +80,58 @@ $arruser   = optional_param_array('user', array(), PARAM_INT);
 $success = 0;
 if($arruser){
 	//$arruser = optional_param('user', '', PARAM_TEXT);
-    $form_courseid  = optional_param('course', 0, PARAM_INT);
-    $course_context = context_course::instance($form_courseid);
+//    $form_courseid  = optional_param('course', 0, PARAM_INT);
+//    $course_context = context_course::instance($form_courseid);
 
 	if($arruser){
+        
+        
+        $manager = new course_enrolment_manager($PAGE, $course);
+        $instances = $manager->get_enrolment_instances();
+        $plugins = $manager->get_enrolment_plugins(true); // Do not allow actions on disabled plugins.
+        
+        $enrolid = 4;
+        
+        foreach($instances as $ins){
+            $instance_id = $ins->id;
+        }
+        $instance = $instances[$instance_id];
+        $plugin = $plugins[$instance->enrol];
+//        print_object($instance);
+//        die;
+        
 		foreach($arruser as $key){
-
-			$role_assignment = array(
-                'roleid'        => 5,
-                'contextid'     => $course_context->id,
-                'userid'        => $key,
-                'timemodified'  => time(),
-                'modifierid'    => $USER->id,
-                'course_level'  => $levelid,
-            );
-			
-//			$DB->insert_record('groups_members', $record, false);
-            if(!$DB->get_record('role_assignments', array('contextid' => $course_context->id, 'userid' => $key))){
-                $DB->insert_record('role_assignments', $role_assignment, false);
-                $success++;
-            }
+            $roleid = 5;
+            $timeend = 0;
+            $startdate = optional_param('startdate', 0, PARAM_INT);
+            $recovergrades = optional_param('recovergrades', 0, PARAM_INT);
+            
+            
+            $today = time();
+            $timestart = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
+            
+//            if ($plugin->allow_enrol($instance) && has_capability('enrol/'.$plugin->get_name().':enrol', $context)) {
+                $plugin->enrol_user($instance, $key, $roleid, $timestart, $timeend, null, $recovergrades);
+                if ($ue = $DB->get_record('role_assignments', array('contextid'=>$course_context->id, 'userid'=>$key))) {
+                    $ue->course_level = $levelid;
+                    $DB->update_record('role_assignments', $ue);
+                }
+//            }
+            
+//			$role_assignment = array(
+//                'roleid'        => 5,
+//                'contextid'     => $course_context->id,
+//                'userid'        => $key,
+//                'timemodified'  => time(),
+//                'modifierid'    => $USER->id,
+//                'course_level'  => $levelid,
+//            );
+//			
+////			$DB->insert_record('groups_members', $record, false);
+//            if(!$DB->get_record('role_assignments', array('contextid' => $course_context->id, 'userid' => $key))){
+//                $DB->insert_record('role_assignments', $role_assignment, false);
+//                $success++;
+//            }
 		}
         unset($arruser);
         if($success){
