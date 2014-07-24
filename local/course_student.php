@@ -9,7 +9,7 @@
  */
 require_once('../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
-
+require_once($CFG->dirroot.'/enrol/locallib.php');
 
 $courseid           = optional_param('course', 0, PARAM_INT);
 $levelid            = optional_param('level', 0, PARAM_INT);
@@ -31,11 +31,8 @@ $params         = null;
 $baseurl        = new moodle_url('/local/course_student.php', array('id' =>0, 'perpage' => $perpage, 'course' => $courseid, 'level'=> $levelid, 'sort'=>$sort, 'dir'=>$dir));
 $sort_baseurl        = new moodle_url('/local/course_student.php', array('id' =>0, 'perpage' => $perpage, 'course' => $courseid, 'level'=> $levelid));
 
-//$group              = $DB->get_record('groups', array('id'=>$groupid), '*', MUST_EXIST);
-//$user               = $DB->get_record('user', array('id'=>$userid), '*', MUST_EXIST);
-//$course             = $DB->get_record('course', array('id'=>$group->courseid), '*', MUST_EXIST);
+$PAGE->set_url($baseurl);
 
-//$group_institution  = $DB->get_record('campus_classes', array('groupid'=>$groupid), '*', MUST_EXIST);
 
 $site = $DB->get_record('course', array('id' => SITEID), '*', MUST_EXIST);
 require_login($site);
@@ -74,11 +71,26 @@ $arruser   = optional_param_array('user', array(), PARAM_INT);
 if($arruser){
 	//$arruser = optional_param('user', '', PARAM_TEXT);
 	$arruser   = optional_param_array('user', array(), PARAM_INT);
-    $course_context = context_course::instance($courseid);
+    $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+    $course_context = context_course::instance($course->id);
+    
+    $manager = new course_enrolment_manager($PAGE, $course);
+    $instances = $manager->get_enrolment_instances();
+    $plugins = $manager->get_enrolment_plugins(true); // Do not allow actions on disabled plugins.
+    
+    $enrol = enrol_get_plugin('manual');
+    $enrolinstances = enrol_get_instances($course->id, true);
+    foreach ($enrolinstances as $courseenrolinstance) {
+        if ($courseenrolinstance->enrol == "manual") {
+            $instance = $courseenrolinstance;
+            break;
+        }
+    }
     
 	if($arruser){
 		foreach($arruser as $key){
             $DB->delete_records("role_assignments", array("userid" => $key, "contextid" => $course_context->id));
+            $enrol->unenrol_user($instance, $key);
 		}
 
 //        $url = new moodle_url($CFG->wwwroot.'/local/course_student.php', array('id'=>0, 'course'=>$courseid, 'level'=>$levelid));

@@ -34,11 +34,6 @@ $sort_baseurl   = new moodle_url('/local/add_student.php', array('id' =>0, 'perp
 
 $PAGE->set_url($baseurl);
 
-$course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
-$course_context = context_course::instance($course->id, MUST_EXIST);
-
-
-
 $site = $DB->get_record('course', array('id' => SITEID), '*', MUST_EXIST);
 require_login($site);
 
@@ -50,9 +45,6 @@ if (!has_capability('moodle/user:update', $sitecontext) and !has_capability('moo
 $pageurl = new moodle_url($CFG->wwwroot.'/local/add_user.php');
 $PAGE->set_url($pageurl);
 $PAGE->set_pagelayout('base');
-
-
-
 
 $returnurl = $CFG->wwwroot;
 
@@ -84,7 +76,8 @@ if($arruser){
 //    $course_context = context_course::instance($form_courseid);
 
 	if($arruser){
-        
+        $course = $DB->get_record('course', array('id'=>$courseid), '*', MUST_EXIST);
+        $course_context = context_course::instance($course->id, MUST_EXIST);
         
         $manager = new course_enrolment_manager($PAGE, $course);
         $instances = $manager->get_enrolment_instances();
@@ -93,7 +86,9 @@ if($arruser){
         $enrolid = 4;
         
         foreach($instances as $ins){
-            $instance_id = $ins->id;
+            if($ins->enrol == "manual"){
+               $instance_id = $ins->id; 
+            }
         }
         $instance = $instances[$instance_id];
         $plugin = $plugins[$instance->enrol];
@@ -106,33 +101,18 @@ if($arruser){
             $startdate = optional_param('startdate', 0, PARAM_INT);
             $recovergrades = optional_param('recovergrades', 0, PARAM_INT);
             
-            
             $today = time();
             $timestart = make_timestamp(date('Y', $today), date('m', $today), date('d', $today), 0, 0, 0);
             
-//            if ($plugin->allow_enrol($instance) && has_capability('enrol/'.$plugin->get_name().':enrol', $context)) {
-                $plugin->enrol_user($instance, $key, $roleid, $timestart, $timeend, null, $recovergrades);
-                if ($ue = $DB->get_record('role_assignments', array('contextid'=>$course_context->id, 'userid'=>$key))) {
-                    $ue->course_level = $levelid;
-                    $DB->update_record('role_assignments', $ue);
-                }
-//            }
-            
-//			$role_assignment = array(
-//                'roleid'        => 5,
-//                'contextid'     => $course_context->id,
-//                'userid'        => $key,
-//                'timemodified'  => time(),
-//                'modifierid'    => $USER->id,
-//                'course_level'  => $levelid,
-//            );
-//			
-////			$DB->insert_record('groups_members', $record, false);
-//            if(!$DB->get_record('role_assignments', array('contextid' => $course_context->id, 'userid' => $key))){
-//                $DB->insert_record('role_assignments', $role_assignment, false);
-//                $success++;
-//            }
+            $plugin->enrol_user($instance, $key, $roleid, $timestart, $timeend, null, $recovergrades);
+            if ($ue = $DB->get_record('role_assignments', array('contextid'=>$course_context->id, 'userid'=>$key))) {
+                $ue->course_level = $levelid;
+                $DB->update_record('role_assignments', $ue);
+            }
+
 		}
+        
+        
         unset($arruser);
         if($success){
             $message = get_string('user_added_tocourse_successfully');
